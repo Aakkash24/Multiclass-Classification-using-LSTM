@@ -13,7 +13,7 @@ def home():
     return render_template("home.html")
 
 @app.route("/predict",methods=["POST"])
-def predict():
+def predict_api():
     data = request.json['data']
     text = [data]
     tokenizer = Tokenizer(num_words=17727, filters='!"#$%&()*+,-./:;<=>?@[\]^_`{|}~',lower=True)
@@ -21,6 +21,18 @@ def predict():
     padded = pad_sequences(seq, maxlen=3000)
     pred = model.predict(padded)
     labels = ['Business','Entertainment','Politics','Sports','Tech']
+
+@app.route("/predictions", methods=["POST"])
+def predict():
+    data = [request.form.values()]
+    tokenizer = Tokenizer(num_words=17727, filters='!"#$%&()*+,-./:;<=>?@[\]^_`{|}~',lower=True)
+    seq = tokenizer.texts_to_sequences(data)
+    padded = pad_sequences(seq, maxlen=3000)
+    pred = model.predict(padded)
+    labels = ['Business','Entertainment','Politics','Sports','Tech']
+    output = labels[np.argmax(pred)]
+    return render_template("home.html",prediction=output)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
