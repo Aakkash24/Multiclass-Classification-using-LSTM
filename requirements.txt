@@ -4,4 +4,3 @@ keras
 numpy 
 # pandas
 # matplotlib
-pickle
